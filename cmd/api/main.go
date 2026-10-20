@@ -10,15 +10,14 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/joho/godotenv"
 	"github.com/joshua-takyi/stockflow-api/container"
 	"github.com/joshua-takyi/stockflow-api/internal/adapters/routes"
 )
 
 func main() {
-	if err := godotenv.Load(".env"); err != nil {
-		slog.Error("loading env", "error", err)
-	}
+	// if err := godotenv.Load(".env"); err != nil {
+	// 	slog.Error("loading env", "error", err)
+	// }
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer cancel()
 

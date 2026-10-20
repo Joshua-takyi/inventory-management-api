@@ -7,6 +7,11 @@ import (
 
 func Router(ctn *container.Container) *gin.Engine {
 	r := gin.Default()
+	r.GET("/", func(ctx *gin.Context) {
+		ctx.JSON(200, gin.H{
+			"message": "welcome",
+		})
+	})
 	v1 := r.Group("/api/v1")
 	v1.GET("/healthz", ctn.HealthHandler.Health)
 	v1.POST("/products", ctn.ProductHandler.Create())
