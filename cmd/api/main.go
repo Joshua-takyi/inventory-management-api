@@ -5,21 +5,27 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
+	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
+	"github.com/joho/godotenv"
 	"github.com/joshua-takyi/stockflow-api/container"
 	"github.com/joshua-takyi/stockflow-api/internal/adapters/routes"
 )
 
 func main() {
+	if err := godotenv.Load(".env"); err != nil {
+		slog.Error("loading env", "error", err)
+	}
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer cancel()
 
 	ctn, err := container.NewContainer(ctx)
 	if err != nil {
 		slog.ErrorContext(ctx, "error loading container", "error", err)
+		os.Exit(1)
 	}
 	if err := <-run(ctx, *ctn); err != nil {
 		slog.ErrorContext(ctx, "server initialization failed", "error", err)
@@ -31,10 +37,10 @@ func run(ctx context.Context, ctn container.Container) <-chan error {
 
 	server := &http.Server{
 		Addr:    ":" + ctn.Config.Port,
-		Handler: routes.Router(),
+		Handler: routes.Router(&ctn),
 	}
 	go func() {
-		close(errChan)
+		defer close(errChan)
 		serverErr := make(chan error, 1)
 		go func() {
 			serverErr <- server.ListenAndServe()

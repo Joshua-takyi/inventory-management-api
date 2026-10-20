@@ -4,7 +4,6 @@ import (
 	"context"
 	"embed"
 	"fmt"
-	"path"
 	"sort"
 	"strings"
 	"time"
@@ -12,7 +11,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// go:embed migrations/*.sql
+//go:embed *.sql
 var migrationFS embed.FS
 
 const migrationLockKey int64 = 8472931
@@ -51,7 +50,7 @@ func Migrate(ctx context.Context, pool *pgxpool.Pool) error {
 		return fmt.Errorf("create migration ledger: %w", err)
 	}
 
-	files, err := migrationFS.ReadDir("migrations")
+	files, err := migrationFS.ReadDir(".")
 	if err != nil {
 		return fmt.Errorf("read migration files: %w", err)
 	}
@@ -84,7 +83,7 @@ func Migrate(ctx context.Context, pool *pgxpool.Pool) error {
 			continue
 		}
 
-		sqlBytes, err := migrationFS.ReadFile(path.Join("migrations", name))
+		sqlBytes, err := migrationFS.ReadFile(name)
 		if err != nil {
 			return fmt.Errorf("read migration %s: %w", name, err)
 		}

@@ -10,7 +10,7 @@ type Config struct {
 func NewConfig() (*Config, error) {
 	return &Config{
 		DbUrl: fallbackEnv("DB_URL", ""),
-		Port:  fallbackEnv("PORT", ""),
+		Port:  fallbackEnv("PORT", "8080"),
 	}, nil
 
 }

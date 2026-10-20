@@ -16,6 +16,11 @@ type ErrorBody struct {
 	Message string     `json:"message"`
 }
 
+type ErrorBodyWithData struct {
+	ErrorBody
+	Data any `json:"data"`
+}
+
 // resolve maps domain errors to a response code. Order matters: most specific first.
 func resolve(err error) codes.Code {
 	switch {
@@ -59,3 +64,11 @@ func WithCode(c *gin.Context, code codes.Code) {
 }
 
 func OK(c *gin.Context, data any) { c.JSON(http.StatusOK, data) }
+
+func WithData(c *gin.Context, code codes.Code, data any) {
+	c.JSON(code.Status(), ErrorBodyWithData{
+		Code:    code,
+		Message: code.Message(),
+		Data:    data,
+	})
+}

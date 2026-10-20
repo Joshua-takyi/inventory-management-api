@@ -15,6 +15,7 @@ const (
 	Conflict           Code = "CONFLICT"
 	TooManyRequests    Code = "TOO_MANY_REQUESTS"
 	Timeout            Code = "REQUEST_TIMEOUT"
+	InvalidUUIDSyntax  Code = "INVALID_UUID_SYNTAX"
 )
 
 type info struct {
@@ -33,6 +34,7 @@ var registry = map[Code]info{
 	Conflict:           {http.StatusConflict, "resource conflict"},
 	TooManyRequests:    {http.StatusTooManyRequests, "too many requests, slow down"},
 	Timeout:            {http.StatusGatewayTimeout, "request timed out"},
+	InvalidUUIDSyntax:  {http.StatusBadRequest, "invalid uuid syntax"},
 }
 
 // Status returns the HTTP status for the code, falling back to 500.
